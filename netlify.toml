@@ -1,0 +1,16 @@
+# Netlify site configuration.
+#
+# This is only strictly needed for the [functions] section below — the
+# default functions directory already happens to be "netlify/functions",
+# so this mostly documents that on purpose. If you already have a
+# netlify.toml (e.g. from connecting GitHub), just merge this
+# [functions] block into it instead of replacing the whole file.
+
+[build]
+  # No build step for this plain HTML/CSS/JS site.
+  publish = "."
+  # If index.html and the assets/ folder live in a subfolder of your repo
+  # instead of the repo root, change "." to that folder's path, e.g. "site".
+
+[functions]
+  directory = "netlify/functions"
