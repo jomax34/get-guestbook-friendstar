@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="pink" data-mode="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ff2fb0">
+<meta name="robots" content="noindex, nofollow">
+<title>✧ bulletin admin ✧</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Same theme system as index.html, trimmed to just what this
+   page needs (no background photo / sidebar / player chrome).
+============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Verdana, Geneva, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+h1, h2 { margin: 0 0 10px; }
+
+html[data-theme="pink"][data-mode="dark"] {
+  --bg-main:#170018; --bg-container:#3d0a35; --bg-container-alt:#570f4a;
+  --accent:#ff2fb0; --accent-2:#ffb3e6; --text:#ffe3f7; --text-muted:#e2a8cf;
+  --border:#ff2fb0; --input-bg:#2a0725; --text-on-accent:#170018;
+}
+
+.admin-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--accent);
+  padding: 5px;
+  border-radius: 14px;
+  box-shadow: 0 0 0 3px var(--bg-main), 0 6px 0 rgba(0,0,0,.35);
+}
+.admin-inner {
+  background: var(--bg-container);
+  border-radius: 9px;
+  padding: 22px 24px;
+}
+.section-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--accent);
+  border-bottom: 3px dashed var(--accent);
+  padding-bottom: 10px;
+  margin-bottom: 6px;
+}
+.admin-sub { color: var(--text-muted); font-size: 13px; margin: 0 0 16px; }
+
+.hp-field { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+.form-row { margin-bottom: 12px; }
+.form-row label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 4px; font-weight: bold; }
+.form-row input, .form-row textarea {
+  width: 100%;
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 14px;
+  background: var(--input-bg);
+  color: var(--text);
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 10px;
+}
+.form-row textarea { resize: vertical; min-height: 90px; }
+
+.btn-submit {
+  font-family: Verdana, Geneva, sans-serif;
+  font-weight: bold;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 rgba(0,0,0,.35);
+  width: 100%;
+}
+.btn-submit:hover { filter: brightness(1.08); }
+.btn-submit:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,.35); }
+button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 3px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
+.status-msg {
+  font-size: 13px;
+  margin-top: 12px;
+  min-height: 1.3em;
+}
+.status-msg.ok { color: #baffb4; }
+.status-msg.err { color: #ffb3b3; }
+
+.preview-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 22px 0 8px;
+  text-transform: none;
+}
+.bulletin-post {
+  background: var(--bg-container-alt);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+.bulletin-head { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: baseline; }
+.bulletin-title { font-weight: bold; color: var(--accent); font-size: 15px; }
+.bulletin-date { font-family: 'VT323', monospace; font-size: 15px; color: var(--text-muted); }
+.bulletin-msg { margin: 8px 0 0; font-size: 14px; line-height: 1.5; white-space: pre-wrap; }
+.bulletin-post.placeholder .bulletin-title { color: var(--text-muted); font-style: italic; }
+
+.back-link { display: inline-block; margin-top: 16px; font-size: 12px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<div class="admin-card">
+  <div class="admin-inner">
+    <h1 class="section-title">BULLETIN ADMIN ✎</h1>
+    <p class="admin-sub">this page isn't linked anywhere on the site — post here and it replaces the bulletin placeholder on the main page.</p>
+
+    <form name="bulletin" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="bulletinForm">
+      <input type="hidden" name="form-name" value="bulletin">
+      <p class="hp-field" aria-hidden="true">
+        <label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
+      </p>
+
+      <div class="form-row">
+        <label for="blTitle">Subject</label>
+        <input type="text" id="blTitle" name="title" required placeholder="e.g. new track dropping soon!!">
+      </div>
+      <div class="form-row">
+        <label for="blMessage">Bulletin</label>
+        <textarea id="blMessage" name="message" rows="4" required placeholder="what's the news?"></textarea>
+      </div>
+      <button type="submit" class="btn-submit">Post Bulletin</button>
+      <p class="status-msg" id="statusMsg" role="status"></p>
+    </form>
+
+    <p class="preview-label">currently live on the site:</p>
+    <div class="bulletin-post placeholder" id="bulletinPreview">
+      <div class="bulletin-head">
+        <span class="bulletin-title" id="previewTitle">no bulletins yet...</span>
+        <span class="bulletin-date" id="previewDate"></span>
+      </div>
+      <p class="bulletin-msg" id="previewMsg">check back soon, i'll post something juicy eventually ✧</p>
+    </div>
+
+    <a class="back-link" href="index.html">&larr; back to the profile</a>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var BULLETIN_STORAGE_KEY = 'friendstar-bulletin-post';
+  var BULLETIN_FUNCTION_URL = '/.netlify/functions/get-bulletin';
+
+  var form = document.getElementById('bulletinForm');
+  var statusMsg = document.getElementById('statusMsg');
+  var previewEl = document.getElementById('bulletinPreview');
+  var previewTitle = document.getElementById('previewTitle');
+  var previewDate = document.getElementById('previewDate');
+  var previewMsg = document.getElementById('previewMsg');
+
+  function loadStoredBulletin() {
+    try {
+      var raw = window.localStorage.getItem(BULLETIN_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function saveStoredBulletin(data) {
+    try {
+      window.localStorage.setItem(BULLETIN_STORAGE_KEY, JSON.stringify(data));
+    } catch (err) { /* storage unavailable — the Netlify submission below still goes through */ }
+  }
+
+  function renderPreview(data) {
+    if (!data || !data.message) { return; }
+    previewTitle.textContent = data.title || 'bulletin';
+    previewDate.textContent = data.date || '';
+    previewMsg.textContent = data.message;
+    previewEl.classList.remove('placeholder');
+  }
+
+  // Show whatever's already live when the page loads.
+  renderPreview(loadStoredBulletin());
+  fetch(BULLETIN_FUNCTION_URL)
+    .then(function (res) { if (!res.ok) { throw new Error('bad response'); } return res.json(); })
+    .then(function (data) { if (data) { saveStoredBulletin(data); renderPreview(data); } })
+    .catch(function () { /* function not deployed yet — local preview above still works */ });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    var titleVal = document.getElementById('blTitle').value.trim();
+    var msgVal = document.getElementById('blMessage').value.trim();
+    if (!titleVal || !msgVal) { return; }
+
+    var entryData = {
+      title: titleVal,
+      message: msgVal,
+      date: new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+    };
+
+    // 1) Save it as the current bulletin for this browser right away —
+    //    this is what makes index.html show the real post instead of
+    //    the placeholder the instant you open it in the same browser.
+    saveStoredBulletin(entryData);
+    renderPreview(entryData);
+
+    // 2) Submit to Netlify Forms so it's captured server-side. Once
+    //    netlify/functions/get-bulletin.js is deployed, that's what lets
+    //    OTHER visitors (not just this browser) see the real bulletin too.
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(new FormData(form)).toString()
+    })
+      .then(function () {
+        statusMsg.textContent = 'posted! ✧ (may take a few seconds to reach other visitors)';
+        statusMsg.className = 'status-msg ok';
+      })
+      .catch(function () {
+        statusMsg.textContent = 'saved for this browser, but the server submission failed — check your connection.';
+        statusMsg.className = 'status-msg err';
+      });
+
+    form.reset();
+  });
+})();
+</script>
+</body>
+</html>
