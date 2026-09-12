@@ -396,6 +396,30 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .fact-list strong { color: var(--accent); }
 
 /* ============================================================
+   FEATURED VIDEO SECTION
+============================================================ */
+.video-frame {
+  width: 100%;
+  background: var(--bg-main);
+  overflow: hidden;
+  border: 3px solid var(--accent);
+  line-height: 0;
+}
+.video-frame video {
+  width: 100%;
+  height: auto;
+  max-height: 480px;
+  object-fit: contain;
+  background: #000;
+  display: block;
+}
+.video-caption {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 10px 2px 0;
+}
+
+/* ============================================================
    MUSIC SECTION
 ============================================================ */
 .music-card { display: flex; gap: 16px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
@@ -591,6 +615,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   padding: 20px 16px 0;
 }
 .site-footer .vt { font-family: 'VT323', monospace; font-size: 15px; }
+.ghost-link {
+  color: inherit;
+  text-decoration: none;
+  cursor: default;
+}
+.ghost-link:hover, .ghost-link:focus { color: inherit; text-decoration: none; }
 
 /* ============================================================
    STICKY CUSTOMIZER BAR
@@ -757,7 +787,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
       <div class="box-inner">
         <h3 class="section-title" style="font-size:11px;">MY FEATURED FRIENDS!!</h3>
         <div class="friends-grid">
-          <div class="friend"><img class="friend-avatar" src="assets/friend-01.jpg" alt="CuddleBug_x"><span>CuddleBug_x</span></div>
+          <div class="friend"><img class="friend-avatar" src="assets/cuddlebug.jpg" alt="CuddleBug_x"><span>CuddleBug_x</span></div>
           <div class="friend"><img class="friend-avatar" src="assets/friend-02.jpg" alt="MidnightVamp"><span>MidnightVamp</span></div>
           <div class="friend"><img class="friend-avatar" src="assets/friend-03.jpg" alt="xEmoBoyx"><span>xEmoBoyx</span></div>
           <div class="friend"><img class="friend-avatar" src="assets/friend-04.jpg" alt="PixieCut_Blue"><span>Indi3girl</span></div>
@@ -796,6 +826,20 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
         </ul>
       </div>
     </section>
+
+    <section id="featured-video" class="box-frame">
+      <div class="box-inner">
+        <h2 class="section-title">My F3ATURED VIDeO!! 🎬</h2>
+        <div class="video-frame pixel-frame">
+          <video src="assets/bumpin.mp4" autoplay muted loop playsinline controls width="100%" poster="">
+            Sorry, your browser doesn't support embedded videos.
+          </video>
+        </div>
+        <p class="video-caption">✧ behind-the-scenes clip 4 the new track, don't mind the mess lol ✧</p>
+      </div>
+    </section>
+
+    <div class="divider" aria-hidden="true">✦ ⋆ ✧ ⋆ ✦ ⋆ ✧ ⋆ ✦</div>
 
     <section id="music" class="box-frame">
       <div class="box-inner">
@@ -923,7 +967,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
       <div class="box-inner">
         <h2 class="section-title">GUESTBOOK ✉</h2>
 
-        <form name="guestbook" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" id="guestbookForm">
+        <form name="guestbook" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="guestbookForm">
           <input type="hidden" name="form-name" value="guestbook">
           <p class="hp-field" aria-hidden="true">
             <label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
@@ -961,7 +1005,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 </div>
 
 <footer class="site-footer">
-  <p class="vt">est. 2004 &middot; built with glitter, snow &amp; too much html</p>
+  <p class="vt">est. 2004 &middot; built with glitter, snow &amp; too much html<a href="bulletin-admin.html" class="ghost-link" aria-hidden="true" tabindex="-1">.</a></p>
   <p>✧ don't forget to leave a comment before you go!! ✧</p>
 </footer>
 
@@ -1100,127 +1144,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
     });
   });
 
-  /* =====================================================================
-     GUESTBOOK FORM — localStorage persistence + Netlify Forms submission
-     -----------------------------------------------------------------
-     What this demo does right now (no backend required, works on any
-     static host, including opening the file locally):
-       1. On submit, the new comment is rendered instantly in the list.
-       2. It's also saved to this browser's localStorage, so it's still
-          there the next time THIS visitor reloads the page. Note this
-          is per-browser/per-device only — other visitors won't see it
-          unless you wire up real server-side storage (see the big
-          comment block below the handler for how to do that).
-       3. It's also fire-and-forget POSTed to "/" so that, once this
-          page is actually deployed on Netlify, the submission is also
-          captured server-side as a real Netlify Forms entry (visible
-          in the Netlify dashboard, and exportable/emailable from
-          there) — without a page redirect or reload.
-  ===================================================================== */
+  /* ===== Guestbook form ===== */
   var form = document.getElementById('guestbookForm');
   var list = document.getElementById('guestbookList');
-  var GUESTBOOK_STORAGE_KEY = 'friendstar-guestbook-entries';
-  // Serverless function that reads real, shared submissions from the
-  // Netlify Forms API — see netlify/functions/get-guestbook.js. If that
-  // function isn't deployed yet, fetching it just fails and this page
-  // quietly falls back to the localStorage-only view below.
-  var GUESTBOOK_FUNCTION_URL = '/.netlify/functions/get-guestbook';
-  // Number of static "seed" <li> entries already baked into the HTML
-  // (captured before any dynamic ones are added), so dynamic entries can
-  // be cleared and re-rendered without touching the seed ones.
-  var seedCount = list.children.length;
 
   function escapeHTML(str) {
     var div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
   }
-
-  function loadStoredEntries() {
-    try {
-      var raw = window.localStorage.getItem(GUESTBOOK_STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch (err) {
-      // localStorage can throw in private-browsing modes or when disabled —
-      // treat that the same as "no saved comments yet" instead of erroring.
-      return [];
-    }
-  }
-
-  function saveStoredEntries(entries) {
-    try {
-      window.localStorage.setItem(GUESTBOOK_STORAGE_KEY, JSON.stringify(entries));
-    } catch (err) {
-      // Storage full/unavailable: the comment still posts and shows up,
-      // it just won't survive a refresh. Not fatal, so fail silently.
-    }
-  }
-
-  function buildEntryEl(data, animate) {
-    var entry = document.createElement('li');
-    entry.className = 'guestbook-entry' + (animate ? ' new-entry' : '');
-    entry.innerHTML =
-      '<div class="entry-head">' +
-        '<span class="entry-name">' + escapeHTML(data.name) + '</span>' +
-        '<span class="entry-date">' + escapeHTML(data.date) + '</span>' +
-      '</div>' +
-      '<p class="entry-msg">' + escapeHTML(data.message) + '</p>';
-    return entry;
-  }
-
-  // Removes only the dynamically-added entries (leaves the static seed
-  // ones alone), so a fresh list can be rendered without duplicates.
-  function clearDynamicEntries() {
-    while (list.children.length > seedCount) {
-      list.removeChild(list.firstChild);
-    }
-  }
-
-  // entries must be oldest-first; prepending in that order leaves the
-  // newest entry on top when this finishes.
-  function renderEntries(entries) {
-    clearDynamicEntries();
-    entries.forEach(function (data) {
-      list.prepend(buildEntryEl(data, false));
-    });
-  }
-
-  // Combines the shared, server-confirmed entries with any local ones
-  // that haven't shown up on the server yet (e.g. a comment posted
-  // seconds ago that Netlify hasn't finished processing). Matches on
-  // name+message, which is good enough for a small personal guestbook.
-  function mergeWithServer(serverEntries, localEntries) {
-    var seen = {};
-    serverEntries.forEach(function (e) { seen[e.name + '::' + e.message] = true; });
-    var stillPending = localEntries.filter(function (e) {
-      return !seen[e.name + '::' + e.message];
-    });
-    return { merged: serverEntries.concat(stillPending), pending: stillPending };
-  }
-
-  // 1) Render immediately from localStorage so the page never looks
-  //    empty while the network request below is in flight.
-  renderEntries(loadStoredEntries());
-
-  // 2) Try to fetch the real, shared list every visitor should see. On
-  //    success this replaces the local-only view with the canonical one
-  //    (keeping any not-yet-synced local entries on top), and prunes
-  //    localStorage down to just those still-pending entries so it
-  //    doesn't grow forever with comments the server now also has.
-  fetch(GUESTBOOK_FUNCTION_URL)
-    .then(function (res) {
-      if (!res.ok) { throw new Error('guestbook function returned ' + res.status); }
-      return res.json();
-    })
-    .then(function (serverEntries) {
-      var result = mergeWithServer(serverEntries, loadStoredEntries());
-      renderEntries(result.merged);
-      saveStoredEntries(result.pending);
-    })
-    .catch(function () {
-      // Function not deployed yet, still building, or offline — the
-      // localStorage-only render from step 1 stays as-is. Nothing to do.
-    });
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -1229,26 +1161,20 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
     var msgVal = document.getElementById('gbMessage').value.trim();
     if (!nameVal || !msgVal) { return; }
 
-    var entryData = {
-      name: nameVal,
-      message: msgVal,
-      date: new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
-    };
+    var dateStr = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    var entry = document.createElement('li');
+    entry.className = 'guestbook-entry new-entry';
+    entry.innerHTML =
+      '<div class="entry-head">' +
+        '<span class="entry-name">' + escapeHTML(nameVal) + '</span>' +
+        '<span class="entry-date">' + dateStr + '</span>' +
+      '</div>' +
+      '<p class="entry-msg">' + escapeHTML(msgVal) + '</p>';
+    list.prepend(entry);
 
-    // 1) Show the new comment right away.
-    list.prepend(buildEntryEl(entryData, true));
-
-    // 2) Persist it to localStorage so it's still visible after a refresh.
-    var stored = loadStoredEntries();
-    stored.push(entryData);
-    saveStoredEntries(stored);
-
-    // 3) Best-effort real submission to Netlify Forms (async, via fetch,
-    //    posting to "/" so there's no redirect/page reload). This is what
-    //    actually reaches Netlify's form backend once deployed there; in
-    //    any other environment (e.g. a local file preview) it just fails
-    //    silently, which is fine since steps 1–2 already made the comment
-    //    visible and persistent for this visitor.
+    /* Best-effort real submission to Netlify Forms so comments are also
+       captured server-side when this page is deployed on Netlify.
+       Safely no-ops (via .catch) anywhere else, e.g. in a local preview. */
     try {
       fetch('/', {
         method: 'POST',
@@ -1259,35 +1185,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 
     form.reset();
   });
-
-  /* =====================================================================
-     READING BACK REAL, SHARED SUBMISSIONS FROM NETLIFY
-     -----------------------------------------------------------------
-     This IS wired up above (GUESTBOOK_FUNCTION_URL + the fetch/merge
-     block before the submit handler) — this comment just documents how
-     it fits together, and the optional next step.
-
-     The <form> is marked data-netlify="true", so once this page is
-     deployed on Netlify, every submission is captured server-side as a
-     real, shared "Form submission" (Site settings → Forms in the
-     dashboard). netlify/functions/get-guestbook.js reads those back via
-     the Netlify Forms API (GET .../sites/{site_id}/submissions, filtered
-     to form_name === "guestbook") and returns them as JSON. This page
-     fetches that same-origin endpoint on load and merges the result with
-     any not-yet-synced local entries. See that file's header comment for
-     the one-time setup (Personal Access Token + NETLIFY_API_TOKEN env
-     variable) — nothing in this file needs the token directly.
-
-     OPTIONAL NEXT STEP — Netlify Identity (login + moderation)
-       If you want a "moderator" who approves comments before they go
-       public, or want posters to be logged-in users:
-         1. Site settings → Identity → Enable Identity.
-         2. Add the Identity widget script and gate posting behind
-            netlifyIdentity.currentUser().
-         3. Have get-guestbook.js check the caller's Identity JWT
-            (available as context.clientContext.user inside the
-            function) to decide who may fetch/approve submissions.
-  ===================================================================== */
 
   /* ===== Fake hit counter ===== */
   var counterEl = document.getElementById('hitcounter');
